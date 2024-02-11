@@ -3,9 +3,10 @@ This is a starter repository for the games webapp assignments of CompSci 235 in 
 
 ## Description
 
-This repository contains an implementation of the domain model from Assignment 1. It contains unit tests which can be run through pytest. It also contains a simple Flask application that renders content of a Game object instance from our domain model on a blank HTML page. 
 
-From here on you can **choose if you want to use the provided domain model or your own implementation from CodeRunner assignment 1**. The domain model implementation may have to be extended, and you may also decide to remove or modify test cases as it suits you. 
+This repository contains the full implementation of the Games Web app. The final grade for this assignment was A+. 
+
+
 
 ## Installation
 
