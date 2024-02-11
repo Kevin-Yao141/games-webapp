@@ -1,0 +1,17 @@
+<nav> 
+        <ul class="navbar">
+            <li><a href="{{url_for('home_bp.home')}}"> Home</a></li>
+            <li><a href="{{url_for('games_bp.browse_games')}}">All Games</a></li>
+            <li>{% include 'searchBar.html'%}</li>
+            <li>kyao733 | mfu466 | jsie347</li>
+            {% if 'username' in session %}
+            <li><a href="{{url_for('user_bp.user')}}">{{ session['username'] }}</a></li>
+            <li><a href="{{url_for('logout_bp.logout')}}">Log Out</a></li>
+            {% else %}
+            <li><a href="{{url_for('signup_bp.signup')}}">Sign Up</a></li>
+            <li><a href="{{url_for('login_bp.login')}}">Log in</a></li>
+            {% endif %}
+        </ul>
+
+
+</nav>

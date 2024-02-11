@@ -1,0 +1,10 @@
+pytest
+pytest-mock
+Flask==2.3.2
+flask-paginate
+flask-wtf
+password-validator
+python-dotenv
+SQLAlchemy==1.4.41
+better-profanity
+wtforms

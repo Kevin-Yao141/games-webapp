@@ -1,0 +1,59 @@
+{% extends 'layout.html' %}
+
+{% block title %}Wishlist{% endblock %}
+
+{% block content %}
+<h1>Hi, {{ session['username'] }}</h1>
+
+<h2>Wishlist</h2>
+<div class="wishlist__table__container">
+    <table class="wishlist__table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Release Date</th>
+                <th>Price</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for game in user.favourite_games %}
+            <tr>
+                <td>
+                    {{ game.game_id }}
+                </td>
+                <td>
+                    <div id="game-link-container">
+                        <a href="{{ url_for('description_bp.description', game_id=game.game_id) }}" id="game-image"><img src="{{ game.image }}">{{ game.title }}</a>
+                    </div>
+                </td>
+                <td>
+                    {{ game.release_date }}
+                </td>
+                <td>
+                    ${{ game.price }}
+                </td>
+                <td>
+                    <div id="remove-from-wishlist-button">
+                    <form action="{{ url_for('user_bp.remove_from_wishlist_endpoint') }}" method="POST">
+                        <input type="hidden" name="game_id" value="{{ game.game_id }}">
+                        <input type="submit" value="Remove from wishlist">
+                    </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<h2>Reviews</h2>
+<div class="reviews">
+    <ul>
+        {% for review in user.reviews %}
+        <li>{{ review.game.title }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+<div class="search__container">
+    <input type="text" class="search_bar" id="search-box" placeholder="Search games...">
+    <div id="search-results" class="search-dropdown"></div>
+</div>
+
+
+<script>
+    const searchBox = document.getElementById('search-box');
+const resultsContainer = document.getElementById('search-results');
+let timeout = null;
+
+searchBox.addEventListener('keyup', function() {
+    clearTimeout(timeout);
+    timeout = setTimeout(function() {
+        let query = searchBox.value;
+
+        if (query.length > 2) {
+            fetch(`/search/${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    resultsContainer.innerHTML = '';
+                    if (data.length > 0) {
+                        data.forEach(game => {
+                            var game_id = game.game_id;
+                            var url = '/browse/' + game_id;
+                            resultsContainer.innerHTML +=
+                            `
+                                <a href=${ url }><div class="search-result-item">
+                                    <img src="${game.image}" alt="${game.title}" width="100px">
+                                    ${game.title}
+                                </div></a>
+                            `;
+                        });
+                        resultsContainer.style.display = 'block';  // Show the results
+                    } else {
+                        resultsContainer.style.display = 'none';   // Hide if no results
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching search results:', error);
+                    resultsContainer.style.display = 'none';   // Hide if there is an error
+                });
+        } else {
+            resultsContainer.style.display = 'none';   // Hide if input is too short
+        }
+    }, 50);
+});
+
+</script>

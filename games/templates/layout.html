@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/css/main.css" />
+    <title>{% block title %}{% endblock %}</title>
+</head>
+
+<body class="body">
+    <div class="body-wrapper">
+        <header>
+            {% include 'navigation.html' %}
+        </header>
+        <div class="sidebar" id="left-sidebar">
+            <a class="logo" href="/">
+                <img src="..\static\images\cs235logo.png" alt="logo" width="240" height="60"/>
+            </a>
+            <div class="sidebar-content">
+            {% block sidebar_content %} {% endblock %}
+            </div>
+        </div>
+
+        <div class="content">
+            {% block content %}{% endblock %}
+        </div>
+        <div class="sidebar" id="right-sidebar"></div>
+
+        <footer>{% include 'footer.html' %}</footer>
+    </div>
+</body>
+
+</html>

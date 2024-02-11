@@ -1,0 +1,199 @@
+{% extends 'layout.html' %}
+
+{% block title %} Games {% endblock %}
+
+<body>
+    {% block sidebar_content %}
+        <div class="filter-container" id="genre-search-container">
+            <input type="text" class="search_bar" id="genre-bar" placeholder="Search genres...">
+            <ul id="genre-filter-dropdown" class="filter-dropdown">
+                {% for genre in genres%}
+                <li>
+                    <input type="checkbox" id="{{ genre.genre_name }}" name="{{ genre.genre_name }}" value="{{ genre.genre_name }}">
+                    <label for="{{ genre.genre_name }}">{{ genre.genre_name }}</label>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="filter-container" id="publisher-search-container">
+            <input type="text" class="search_bar" id="publisher-bar" placeholder="Search publishers...">
+            <ul id="publisher-filter-dropdown" class="filter-dropdown">
+                {% for publisher in publishers %}
+                <li>
+                    <input type="radio" id="{{ publisher.publisher_name }}" name="publisher" value="{{ publisher.publisher_name }}">
+                    <label for="{{ publisher.publisher_name }}">{{ publisher.publisher_name }}</label>
+                </li>
+                {% endfor %}
+            </ul>
+
+        </div>
+
+
+    <div id="filter-buttons">
+        <button class="filter-button" id="apply-filters">apply filter(s)</button>
+        <button class="filter-button" id="clear-filters">clear filter(s)</button>
+        <div id="selected-Genres"></div>
+        <div id="selected-Publishers"></div>
+    </div>
+
+    {% endblock %}
+
+    {% block content %}
+    <div class="games__table__container">
+        {% if games|length >
+             0 %}
+        <table class="games__table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Release Date</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for game in games %}
+                <tr>
+                    <td>
+                        {{ game.game_id }}
+                    </td>
+                    <td>
+                        <div id="game-link-container">
+                        <a href="{{ url_for('description_bp.description', game_id = game.game_id) }}"id="game-image"><img src="{{ game.image }}"></img> {{ game.title }}</a>
+                        </div>
+                    </td>
+                    <td>
+                        {{ game.release_date }}
+                    </td>
+                    <td>
+                        ${{ game.price }}
+                    </td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No games found. Please change filters.</p>
+        {% endif %}
+    </div>
+    {{ pagination.links }}
+</body>
+
+<script>
+
+    
+    document.getElementById('genre-bar').addEventListener('click', function() {
+    document.getElementById('genre-filter-dropdown').style.display = 'block';
+});
+
+document.getElementById('publisher-bar').addEventListener('click', function() {
+    document.getElementById('publisher-filter-dropdown').style.display = 'block';
+});
+
+document.addEventListener('click', function(event) {
+    var genreFilterDropdown = document.getElementById('genre-filter-dropdown');
+    var publisherFilterDropdown = document.getElementById('publisher-filter-dropdown');
+    var isClickInsideGenreFilterDropdown = genreFilterDropdown.contains(event.target);
+    var isClickInsidePublisherFilterDropdown = publisherFilterDropdown.contains(event.target);
+    
+    if (event.target.id !== 'search-box' && event.target.id !== 'search-results' && event.target.id !== 'genre-bar' && !isClickInsideGenreFilterDropdown && event.target.id !== 'publisher-bar' && !isClickInsidePublisherFilterDropdown) {
+        document.getElementById('search-results').style.display = 'none';
+
+
+        genreFilterDropdown.style.display = 'none';
+        publisherFilterDropdown.style.display = 'none';
+    }
+});
+document.getElementById('apply-filters').addEventListener('click', function() {
+    var selectedGenres = [];
+    var selectedPublisher = document.querySelector('#publisher-filter-dropdown input[type="radio"]:checked');
+    var checkboxes = document.querySelectorAll('#genre-filter-dropdown input[type="checkbox"]');
+    
+    checkboxes.forEach(function(checkbox) {
+        if (checkbox.checked) {
+            selectedGenres.push(checkbox.id);
+        }
+    });
+
+    if (selectedGenres.length > 0 || selectedPublisher) {
+        var url = '/browse?page=1';
+        if (selectedGenres.length > 0){
+            url += '&genres=' + selectedGenres.join(',');
+        }
+        if (selectedPublisher){
+            url += '&publisher=' + selectedPublisher.id;
+        }
+        window.location.href = url;
+    }
+
+    updateSelectedFilters();
+});
+
+
+
+document.getElementById('clear-filters').addEventListener('click', function(){
+    selectedGenres = [];
+    selectedPublisher = null;
+    window.location.href = '/browse';
+    updateSelectedFilters();
+});
+
+
+function search_filter(elementID, dropdownID){
+    var input, filter, ul, li, a, i;
+  input = document.getElementById(elementID);
+  filter = input.value.toUpperCase();
+  div = document.getElementById(dropdownID);
+  a = div.getElementsByTagName("li");
+  for (i = 0; i < a.length; i++) {
+    txtValue = a[i].textContent || a[i].innerText;
+    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+      a[i].style.display = "";
+    } else {
+      a[i].style.display = "none";
+    }
+
+}
+}
+
+document.getElementById('genre-bar').addEventListener('keyup', function() {
+    search_filter('genre-bar', 'genre-filter-dropdown');
+});    
+
+document.getElementById('publisher-bar').addEventListener('keyup', function() {
+    search_filter('publisher-bar', 'publisher-filter-dropdown');
+});
+
+function updateSelectedFilters() {
+    var selectedGenres = [];
+    var selectedPublisher = document.querySelector('#publisher-filter-dropdown input[type="radio"]:checked');
+    var checkboxes = document.querySelectorAll('#genre-filter-dropdown input[type="checkbox"]');
+    var selectedGenresDiv = document.getElementById('selected-Genres');
+    var selectedPublishersDiv = document.getElementById('selected-Publishers');
+    
+    checkboxes.forEach(function(checkbox) {
+        if (checkbox.checked) {
+            selectedGenres.push(checkbox.value);
+        }
+    });
+
+    selectedGenresDiv.innerHTML = 'Selected Genres: ' + (selectedGenres.length > 0 ? selectedGenres.join(', ') : 'None');
+    selectedPublishersDiv.innerHTML = 'Selected Publisher: ' + (selectedPublisher ? selectedPublisher.value : 'None');
+}
+
+document.querySelectorAll('#genre-filter-dropdown input[type="checkbox"]').forEach(function(checkbox) {
+    checkbox.addEventListener('change', updateSelectedFilters);
+});
+
+document.querySelectorAll('#publisher-filter-dropdown input[type="radio"]').forEach(function(radio) {
+    radio.addEventListener('change', updateSelectedFilters);
+});
+
+
+
+
+
+    </script>
+{% endblock %}

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Games Page</title>
+    <link rel="stylesheet" href="../static/css/games.css" />
+</head>
+<body id="body">
+        {% include 'navigation.html' %}
+    <main>
+        <div class="game__table">
+        <table>
+            <thead>
+            <tr>
+                <th>AppID</th>
+                <th>Game</th>
+                <th>Release date</th>
+                <th>Price</th>
+                <th>Publishers</th>
+                <th>Genres</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for game in games %}
+            <tr>
+                <td>{{ game.game_id }}</td>
+                <td><a href="{{url_for('game_description', game_id=game.game_id)}}"><img src={{game.image_url}} alt="{{game.title}}"></img></a></td>
+                <td>{{game.release_date}}</td>
+                <td>{{game.price}}</td>
+                <td>{{game.publisher.publisher_name}}</td>
+                <td>
+                    {% for genre in game.genres %}
+                        {{genre.genre_name}}
+                    {% endfor %}
+                </td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+        </table> 
+        </div>  
+        <div id="pagination">
+            {% if page > 1 %}
+                <a href="{{ url_for('games_page', page=page-1) }}">Previous</a>
+            {% endif %}
+            
+            Page {{ page }} of {{ total_pages }}
+    
+            {% if page < total_pages %}
+                <a href="{{ url_for('games_page', page=page+1) }}">Next</a>
+            {% endif %}
+
+            <br></br>
+
+            <input type="number" id="page_number" name="page_number" min="1" max="{{ total_pages }}">
+            <button id="submit_button" onclick="goToPage()">Go to page</button>
+        </div>         
+    </main>
+
+
+    {% include 'footer.html' %}
+</body>
+
+<script>
+    function goToPage() {
+        var page_number = document.getElementById("page_number").value;
+        if (page_number <= "{{ total_pages }}") {
+            window.location.href = "{{ url_for('games_page'  ) }}/" + page_number;
+        }
+    }
+</script>
+
+</html>
